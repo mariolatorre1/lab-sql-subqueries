@@ -60,7 +60,23 @@ limit 1)));
 
 -- Get the client_id and the total_amount_spent of those clients who spent more than the average of 
 -- the total_amount spent by each client.
-select customer_id, sum(amount) as total_spent from payment
-group by customer_id
-having sum(amount) > (select avg(amount) from payment);
+select c.customer_id, concat(first_name, ' ', last_name) as customer_name, sum(p.amount) as total_amount_spent 
+from customer c 
+join payment p on c.customer_id = p.customer_id 
+group by c.customer_id, concat(first_name, ' ', last_name)
+having total_amount_spent > (
+select avg(total_amount_spent) 
+from (select customer_id, SUM(amount) as total_amount_spent 
+from payment b group by customer_id) as b);
+
+
+
+
+
+
+
+
+
+
+
 
